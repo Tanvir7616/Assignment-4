@@ -1,8 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+    // Initial refresh
     refreshDashboard();
 
+    // -----------------------
     // Interview buttons
+    // -----------------------
     document.querySelectorAll(".interview-btn").forEach(function (btn) {
         btn.addEventListener("click", function () {
             updateStatus(this, "INTERVIEW");
@@ -10,7 +13,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    // -----------------------
     // Rejected buttons
+    // -----------------------
     document.querySelectorAll(".rejected-btn").forEach(function (btn) {
         btn.addEventListener("click", function () {
             updateStatus(this, "REJECTED");
@@ -18,74 +23,47 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    // -----------------------
     // Delete buttons
+    // -----------------------
     document.querySelectorAll(".delete-btn").forEach(function (btn) {
         btn.addEventListener("click", function () {
-            var card = this.closest('.job-card');
+            const card = this.closest('.job-card');
             card.remove();
             refreshDashboard();
         });
     });
 
+    // -----------------------
     // Filter buttons
+    // -----------------------
     document.getElementById("filter-all").addEventListener("click", function () {
         filterJobs("ALL");
-        toggleEmptyState();
     });
 
     document.getElementById("filter-interview").addEventListener("click", function () {
         filterJobs("INTERVIEW");
-        toggleEmptyState();
     });
 
     document.getElementById("filter-rejected").addEventListener("click", function () {
         filterJobs("REJECTED");
-        toggleEmptyState();
     });
 
 });
 
-
-// Filter function (Safe)
+// -----------------------
+// Filter function
+// -----------------------
 function filterJobs(type) {
+    const allCards = document.querySelectorAll('.job-card');
 
-    var allCards = document.querySelectorAll('.job-card');
+    allCards.forEach(card => {
+        const status = card.querySelector('.status-label').innerText;
 
-    for (var i = 0; i < allCards.length; i++) {
-
-        var status = allCards[i].querySelector('.status-label').innerText;
-
-        if (type === "ALL") {
-            allCards[i].style.display = "block";
+        if (type === "ALL" || status === type) {
+            card.style.display = "block";
+        } else {
+            card.style.display = "none";
         }
-        else if (status === type) {
-            allCards[i].style.display = "block";
-        }
-        else {
-            allCards[i].style.display = "none";
-        }
-    }
-}
-
-// Toggle Empty State function
-function toggleEmptyState() {
-
-    const visibleCards = [...document.querySelectorAll(".job-card")]
-        .filter(card => card.style.display !== "none");
-
-    const emptyState = document.getElementById("empty-state");
-    const jobCountText = document.getElementById("job-count-text");
-
-    if (visibleCards.length === 0) {
-        emptyState.classList.remove("hidden");
-    } else {
-        emptyState.classList.add("hidden");
-    }
-
-    jobCountText.innerText = visibleCards.length + " jobs";
-}
-
-// Refresh Dashboard function
-function refreshDashboard() {
-    toggleEmptyState(); // এখানে call করলে সব update এর পরে empty state ঠিক থাকে
+    });
 }
